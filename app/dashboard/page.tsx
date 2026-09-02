@@ -11,11 +11,10 @@ export const dynamic = "force-dynamic";
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) redirect("/login");
-  const [entries, watched, watching, planned, average] = await Promise.all([
+  const [entries, watched, watching, average] = await Promise.all([
     db.watchEntry.findMany({ where: { userId: session.user.id }, orderBy: { createdAt: "desc" }, take: 6 }),
     db.watchEntry.count({ where: { userId: session.user.id, status: "WATCHED" } }),
     db.watchEntry.count({ where: { userId: session.user.id, status: "WATCHING" } }),
-    db.watchEntry.count({ where: { userId: session.user.id, status: "PLAN_TO_WATCH" } }),
     db.watchEntry.aggregate({ where: { userId: session.user.id, rating: { not: null } }, _avg: { rating: true } }),
   ]);
   const firstName = session.user.name?.split(" ")[0] || "there";

@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    "lib_*_template.ts",
+    "prisma_schema_template.txt",
   ]),
 ]);
 
