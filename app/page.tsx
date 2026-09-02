@@ -1,69 +1,40 @@
-import Image from "next/image";
+import { ArrowRight, Bookmark, Check, Clapperboard, Search, Star } from "lucide-react";
+
+const shelves = [
+  { title: "Dune: Part Two", meta: "Movie · 2024", tone: "from-[#d78d54] via-[#6b3033] to-[#17131b]", mark: "D" },
+  { title: "The Bear", meta: "Series · 2022", tone: "from-[#b84c2f] via-[#33191a] to-[#111216]", mark: "B" },
+  { title: "Past Lives", meta: "Movie · 2023", tone: "from-[#6e8a93] via-[#263744] to-[#121b24]", mark: "P" },
+];
+const genres = ["Everything", "Movies", "Series", "Anime", "K-dramas"];
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <main className="min-h-screen overflow-hidden bg-[#101214] text-[#f5f1e8]">
+      <div className="mx-auto max-w-7xl px-6 py-6 sm:px-10 lg:px-14">
+        <nav className="flex items-center justify-between border-b border-white/10 pb-6">
+          <a href="/" className="flex items-center gap-3 text-sm font-semibold tracking-[0.18em]"><span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#d9f06a] text-[#101214]"><Clapperboard size={18} /></span>WATCHVERSE</a>
+          <div className="hidden items-center gap-8 text-sm text-white/60 md:flex"><a href="#discover" className="hover:text-white">Discover</a><a href="#how-it-works" className="hover:text-white">How it works</a></div>
+          <a href="#library" className="rounded-full border border-white/20 px-5 py-2.5 text-sm font-medium hover:border-[#d9f06a] hover:text-[#d9f06a]">Open library</a>
+        </nav>
+
+        <section className="grid gap-12 py-20 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:py-28">
+          <div>
+            <p className="mb-6 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.28em] text-[#d9f06a]"><span className="h-1.5 w-1.5 rounded-full bg-[#d9f06a]" />Your watch life, in one place</p>
+            <h1 className="max-w-3xl text-5xl font-semibold leading-[0.98] tracking-[-0.04em] sm:text-7xl">Keep every story <span className="text-[#d9f06a]">worth remembering.</span></h1>
+            <p className="mt-7 max-w-lg text-lg leading-8 text-white/60">Track films, series, anime, and everything in between. Build a library that feels like you.</p>
+            <div className="mt-9 flex max-w-md items-center gap-3 rounded-full border border-white/15 bg-white/[0.06] p-2 pl-5"><Search size={19} className="text-white/50" /><span className="flex-1 text-sm text-white/45">Search for a title to add...</span><button type="button" aria-label="Search titles" className="flex h-10 w-10 items-center justify-center rounded-full bg-[#d9f06a] text-[#101214] hover:scale-105"><ArrowRight size={18} /></button></div>
+            <div className="mt-8 flex flex-wrap gap-x-6 gap-y-3 text-sm text-white/50"><span className="flex items-center gap-2"><Check size={15} className="text-[#d9f06a]" />Watch progress</span><span className="flex items-center gap-2"><Check size={15} className="text-[#d9f06a]" />Personal ratings</span><span className="flex items-center gap-2"><Check size={15} className="text-[#d9f06a]" />Smart lists</span></div>
+          </div>
+          <div className="relative mx-auto h-[390px] w-full max-w-[500px] sm:h-[470px]" aria-label="Featured titles">
+            <div className="absolute right-0 top-8 h-[320px] w-[210px] rotate-[9deg] rounded-2xl bg-gradient-to-br from-[#e2a27a] via-[#59363b] to-[#16171c] p-5 shadow-2xl shadow-black/50 sm:h-[390px] sm:w-[255px]"><div className="flex h-full flex-col justify-between border border-white/20 p-4"><span className="text-xs tracking-[0.3em] text-white/60">FEATURED</span><span className="text-6xl font-semibold tracking-[-0.08em]">DUNE<small className="block text-sm tracking-[0.25em]">PART TWO</small></span></div></div>
+            <div className="absolute left-4 top-20 h-[320px] w-[210px] -rotate-[9deg] rounded-2xl bg-gradient-to-br from-[#8aa5a8] via-[#344c59] to-[#11191e] p-5 shadow-2xl shadow-black/50 sm:h-[390px] sm:w-[255px]"><div className="flex h-full flex-col justify-between border border-white/20 p-4"><span className="text-xs tracking-[0.3em] text-white/60">YOUR NEXT WATCH</span><span className="text-6xl font-semibold tracking-[-0.08em]">PAST<small className="block text-sm tracking-[0.25em]">LIVES</small></span></div></div>
+            <div className="absolute bottom-2 left-1/2 flex -translate-x-1/2 items-center gap-3 rounded-full border border-white/15 bg-[#191c1f]/90 px-4 py-3 text-xs shadow-xl backdrop-blur"><Star size={15} fill="#d9f06a" className="text-[#d9f06a]" />4.8 average rating</div>
+          </div>
+        </section>
+
+        <section id="discover" className="border-t border-white/10 py-14"><div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end"><div><p className="text-xs uppercase tracking-[0.25em] text-white/40">Your universe</p><h2 className="mt-2 text-3xl font-semibold tracking-tight">Start your collection</h2></div><div className="flex gap-2 overflow-x-auto pb-1">{genres.map((genre, index) => <button type="button" key={genre} className={`whitespace-nowrap rounded-full px-4 py-2 text-xs ${index === 0 ? "bg-[#d9f06a] text-[#101214]" : "border border-white/10 text-white/55 hover:border-white/30 hover:text-white"}`}>{genre}</button>)}</div></div><div className="grid gap-4 sm:grid-cols-3">{shelves.map((item) => <article key={item.title} className={`group relative min-h-64 overflow-hidden rounded-xl border border-white/10 bg-gradient-to-br p-5 ${item.tone}`}><div className="relative flex min-h-56 flex-col justify-between"><div className="flex justify-between"><span className="text-xs uppercase tracking-[0.2em] text-white/60">{item.meta}</span><Bookmark size={17} className="text-white/60 group-hover:text-[#d9f06a]" /></div><div><span className="text-7xl font-semibold tracking-[-0.1em] text-white/80">{item.mark}</span><h3 className="mt-2 text-xl font-medium">{item.title}</h3></div></div></article>)}</div></section>
+        <section id="how-it-works" className="flex flex-col justify-between gap-6 border-t border-white/10 py-10 text-sm text-white/45 sm:flex-row sm:items-center"><p>WatchVerse <span className="text-white/20">/</span> A home for what you watch.</p><p id="library" className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-[#d9f06a]" />Your library is ready when you are.</p></section>
+      </div>
+    </main>
   );
 }
