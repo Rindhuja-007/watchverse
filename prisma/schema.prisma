@@ -1,0 +1,156 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id            String         @id @default(cuid())
+  name          String?
+  email         String         @unique
+  emailVerified DateTime?
+  passwordHash  String?
+  image         String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  accounts      Account[]
+  sessions      Session[]
+  watchEntries  WatchEntry[]
+  tags          Tag[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model WatchEntry {
+  id              String            @id @default(cuid())
+  userId          String
+  externalMediaId Int
+  mediaType       MediaType
+  title           String
+  posterPath      String?
+  backdropPath    String?
+  overview        String?           @db.Text
+  releaseDate     DateTime?
+  domain          Domain
+  status          WatchStatus       @default(PLAN_TO_WATCH)
+  rating          Int?
+  notes           String?            @db.Text
+  favorite        Boolean            @default(false)
+  dateAdded       DateTime           @default(now())
+  dateStarted     DateTime?
+  dateCompleted   DateTime?
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  user            User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  genres          WatchEntryGenre[]
+  tags            WatchEntryTag[]
+  progress        EpisodeProgress[]
+
+  @@unique([userId, externalMediaId, mediaType])
+  @@index([userId, status])
+  @@index([userId, domain])
+  @@index([userId, createdAt])
+  @@index([userId, dateCompleted])
+  @@index([userId, favorite])
+}
+
+model Genre {
+  id              String            @id @default(cuid())
+  externalGenreId Int
+  name            String
+  entries         WatchEntryGenre[]
+  @@unique([externalGenreId])
+}
+
+model WatchEntryGenre {
+  watchEntryId String
+  genreId      String
+  watchEntry   WatchEntry @relation(fields: [watchEntryId], references: [id], onDelete: Cascade)
+  genre        Genre      @relation(fields: [genreId], references: [id], onDelete: Cascade)
+  @@id([watchEntryId, genreId])
+}
+
+model Tag {
+  id        String          @id @default(cuid())
+  userId    String
+  name      String
+  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  entries   WatchEntryTag[]
+  @@unique([userId, name])
+}
+
+model WatchEntryTag {
+  watchEntryId String
+  tagId        String
+  watchEntry   WatchEntry @relation(fields: [watchEntryId], references: [id], onDelete: Cascade)
+  tag          Tag        @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  @@id([watchEntryId, tagId])
+}
+
+model EpisodeProgress {
+  id           String     @id @default(cuid())
+  watchEntryId String
+  seasonNumber Int
+  episodeNumber Int
+  watched      Boolean    @default(false)
+  watchedAt    DateTime?
+  watchEntry   WatchEntry @relation(fields: [watchEntryId], references: [id], onDelete: Cascade)
+  @@unique([watchEntryId, seasonNumber, episodeNumber])
+  @@index([watchEntryId, watched])
+}
+
+enum MediaType {
+  MOVIE
+  TV
+}
+
+enum Domain {
+  MOVIE
+  SERIES
+  ANIME
+  KDRAMA
+  SITCOM
+}
+
+enum WatchStatus {
+  WATCHED
+  WATCHING
+  PLAN_TO_WATCH
+  ON_HOLD
+  DROPPED
+}

@@ -1,0 +1,15 @@
+"use client";
+
+import { FormEvent, useState } from "react";
+import { Search, Star } from "lucide-react";
+
+type Result = { id: number; media_type: "movie" | "tv"; title?: string; name?: string; overview?: string; release_date?: string; first_air_date?: string; vote_average?: number; poster_path?: string | null };
+
+export function AddTitleSearch() {
+  const [results, setResults] = useState<Result[]>([]);
+  const [query, setQuery] = useState("");
+  const [message, setMessage] = useState("");
+  async function search(event: FormEvent) { event.preventDefault(); if (query.trim().length < 2) return; const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`); const data = await response.json(); setResults(data.results || []); setMessage(data.error || ""); }
+  async function add(result: Result) { const response = await fetch("/api/library", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ externalMediaId: result.id, mediaType: result.media_type === "tv" ? "TV" : "MOVIE", title: result.title || result.name, posterPath: result.poster_path, overview: result.overview, releaseDate: result.release_date || result.first_air_date || null, domain: result.media_type === "movie" ? "MOVIE" : "SERIES" }) }); setMessage(response.ok ? `${result.title || result.name} added to your universe.` : (await response.json()).error || "Could not add that title."); }
+  return <div className="mt-10"><form onSubmit={search} className="flex max-w-2xl items-center gap-3 rounded-2xl border border-white/15 bg-white/[0.05] p-2 pl-5"><Search size={20} className="text-white/50" /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search movies and series..." className="min-w-0 flex-1 bg-transparent py-3 text-white outline-none placeholder:text-white/35" /><button className="rounded-xl bg-[#d9f06a] px-5 py-3 text-sm font-semibold text-[#101214]">Search</button></form>{message && <p className="mt-5 text-sm text-[#d9f06a]">{message}</p>}<div className="mt-8 grid gap-3">{results.map((result) => <article key={`${result.media_type}-${result.id}`} className="flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/[0.04] p-4"><div className="min-w-0"><h2 className="truncate text-lg font-medium">{result.title || result.name}</h2><p className="mt-1 text-sm text-white/45">{result.media_type === "tv" ? "Series" : "Movie"} · {(result.release_date || result.first_air_date || "").slice(0, 4) || "Unknown year"} · <Star size={12} className="inline text-[#d9f06a]" /> {result.vote_average?.toFixed(1) || "-"}</p></div><button onClick={() => add(result)} className="shrink-0 rounded-full border border-[#d9f06a]/50 px-4 py-2 text-sm text-[#d9f06a] hover:bg-[#d9f06a] hover:text-[#101214]">Add</button></article>)}</div></div>;
+}
