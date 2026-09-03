@@ -24,3 +24,35 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.poster-card-hover {
+  transition: transform 300ms ease, box-shadow 300ms ease;
+}
+
+.poster-card-hover:hover {
+  transform: translateY(-14px) rotate(0deg) scale(1.035);
+  z-index: 10;
+  box-shadow: 0 28px 55px rgb(0 0 0 / 0.55);
+}
+
+.stream-card {
+  animation: card-drift 4.5s ease-in-out infinite;
+}
+
+.stream-card:hover {
+  animation-play-state: paused;
+  transform: translateY(-8px);
+  border-color: rgb(217 240 106 / 0.55);
+  box-shadow: 0 20px 40px rgb(0 0 0 / 0.3);
+  transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+}
+
+@keyframes card-drift {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .poster-card-hover,
+  .stream-card { animation: none; transition: none; }
+}
