@@ -27,14 +27,14 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ name, email, password }),
         });
+        const data = await response.json().catch(() => null);
         if (!response.ok) {
-          const data = await response.json();
-          setError(data.error || "Failed to create account.");
+          setError(data?.error || `Registration failed (status ${response.status}).`);
           setPending(false);
           return;
         }
       } catch {
-        setError("Network error while creating account.");
+        setError("Network error while creating account. Please check your connection.");
         setPending(false);
         return;
       }
