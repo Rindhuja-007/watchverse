@@ -54,3 +54,9 @@ Thumbs.db
 lib_*_template.ts
 prisma_schema_template.txt
 
+# SQLite databases
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+

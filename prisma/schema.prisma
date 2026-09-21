@@ -1,5 +1,5 @@
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -28,12 +28,12 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -60,23 +60,23 @@ model WatchEntry {
   id              String            @id @default(cuid())
   userId          String
   externalMediaId Int
-  mediaType       MediaType
+  mediaType       String            @default("MOVIE")
   title           String
   posterPath      String?
   backdropPath    String?
-  overview        String?           @db.Text
+  overview        String?
   releaseDate     DateTime?
-  domain          Domain
-  status          WatchStatus       @default(PLAN_TO_WATCH)
+  domain          String            @default("MOVIE")
+  status          String            @default("PLAN_TO_WATCH")
   rating          Int?
-  notes           String?            @db.Text
-  favorite        Boolean            @default(false)
-  dateAdded       DateTime           @default(now())
+  notes           String?
+  favorite        Boolean           @default(false)
+  dateAdded       DateTime          @default(now())
   dateStarted     DateTime?
   dateCompleted   DateTime?
-  createdAt       DateTime           @default(now())
-  updatedAt       DateTime           @updatedAt
-  user            User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   genres          WatchEntryGenre[]
   tags            WatchEntryTag[]
   progress        EpisodeProgress[]
@@ -91,10 +91,9 @@ model WatchEntry {
 
 model Genre {
   id              String            @id @default(cuid())
-  externalGenreId Int
+  externalGenreId Int               @unique
   name            String
   entries         WatchEntryGenre[]
-  @@unique([externalGenreId])
 }
 
 model WatchEntryGenre {
@@ -102,15 +101,17 @@ model WatchEntryGenre {
   genreId      String
   watchEntry   WatchEntry @relation(fields: [watchEntryId], references: [id], onDelete: Cascade)
   genre        Genre      @relation(fields: [genreId], references: [id], onDelete: Cascade)
+
   @@id([watchEntryId, genreId])
 }
 
 model Tag {
-  id        String          @id @default(cuid())
-  userId    String
-  name      String
-  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  entries   WatchEntryTag[]
+  id      String          @id @default(cuid())
+  userId  String
+  name    String
+  user    User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  entries WatchEntryTag[]
+
   @@unique([userId, name])
 }
 
@@ -119,38 +120,19 @@ model WatchEntryTag {
   tagId        String
   watchEntry   WatchEntry @relation(fields: [watchEntryId], references: [id], onDelete: Cascade)
   tag          Tag        @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
   @@id([watchEntryId, tagId])
 }
 
 model EpisodeProgress {
-  id           String     @id @default(cuid())
-  watchEntryId String
-  seasonNumber Int
+  id            String     @id @default(cuid())
+  watchEntryId  String
+  seasonNumber  Int
   episodeNumber Int
-  watched      Boolean    @default(false)
-  watchedAt    DateTime?
-  watchEntry   WatchEntry @relation(fields: [watchEntryId], references: [id], onDelete: Cascade)
+  watched       Boolean    @default(false)
+  watchedAt     DateTime?
+  watchEntry    WatchEntry @relation(fields: [watchEntryId], references: [id], onDelete: Cascade)
+
   @@unique([watchEntryId, seasonNumber, episodeNumber])
   @@index([watchEntryId, watched])
-}
-
-enum MediaType {
-  MOVIE
-  TV
-}
-
-enum Domain {
-  MOVIE
-  SERIES
-  ANIME
-  KDRAMA
-  SITCOM
-}
-
-enum WatchStatus {
-  WATCHED
-  WATCHING
-  PLAN_TO_WATCH
-  ON_HOLD
-  DROPPED
 }

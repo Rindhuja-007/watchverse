@@ -1,6 +1,31 @@
-import Link from "next/link";
+import { Navbar } from "@/components/common/navbar";
 import { AddTitleSearch } from "@/components/search/add-title-search";
+import { PlusCircle, Film } from "lucide-react";
+import Link from "next/link";
 
 export default function AddPage() {
-  return <main className="min-h-screen bg-[#101214] px-6 py-8 text-[#f5f1e8] sm:px-10 lg:px-14"><div className="mx-auto max-w-5xl"><Link href="/dashboard" className="text-sm text-[#d9f06a]">← Dashboard</Link><div className="py-16"><p className="text-xs uppercase tracking-[0.25em] text-[#d9f06a]">Expand your universe</p><h1 className="mt-3 text-5xl font-semibold tracking-tight">Add a story.</h1><p className="mt-4 text-lg text-white/55">Search TMDB for something you watched, or can&apos;t wait to watch.</p><AddTitleSearch /></div></div></main>;
+  return (
+    <div className="min-h-screen bg-[#0d0f12] text-[#f5f1e8]">
+      <Navbar />
+
+      <main className="mx-auto max-w-6xl px-6 py-10 sm:px-10 lg:px-14">
+        {/* Header */}
+        <div className="border-b border-white/10 pb-8">
+          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.25em] text-[#d9f06a]">
+            <PlusCircle size={14} />
+            <span>Expand Your Universe</span>
+          </div>
+          <h1 className="mt-2 text-4xl font-bold tracking-tight sm:text-5xl">
+            Add a Story
+          </h1>
+          <p className="mt-2 text-sm text-white/55">
+            Search top-rated films, anime, and series or add your own custom/unlisted titles with personal ratings, status, and reviews.
+          </p>
+        </div>
+
+        {/* AddTitleSearch with Hybrid Search + Custom/Manual Modal */}
+        <AddTitleSearch />
+      </main>
+    </div>
+  );
 }

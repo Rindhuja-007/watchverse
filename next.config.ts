@@ -12,19 +12,16 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "*.supabase.co",
       },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
+      {
+        protocol: "https",
+        hostname: "m.media-amazon.com",
+      },
     ],
   },
-  headers: async () => [
-    {
-      source: "/api/:path*",
-      headers: [
-        {
-          key: "Content-Type",
-          value: "application/json",
-        },
-      ],
-    },
-  ],
 };
 
 export default nextConfig;
