@@ -75,6 +75,98 @@ body {
   transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
 }
 
+/* Floating Collector Card Animations */
+@keyframes float-slow {
+  0%, 100% {
+    transform: translateY(0px) rotate(var(--card-rot, 0deg));
+  }
+  50% {
+    transform: translateY(-12px) rotate(calc(var(--card-rot, 0deg) + 1.5deg));
+  }
+}
+
+@keyframes float-reverse {
+  0%, 100% {
+    transform: translateY(-10px) rotate(var(--card-rot, 0deg));
+  }
+  50% {
+    transform: translateY(4px) rotate(calc(var(--card-rot, 0deg) - 1.5deg));
+  }
+}
+
+@keyframes float-gentle {
+  0%, 100% {
+    transform: translateY(0px) rotate(var(--card-rot, 0deg));
+  }
+  50% {
+    transform: translateY(-8px) rotate(var(--card-rot, 0deg));
+  }
+}
+
+.animate-float-slow {
+  animation: float-slow 6s ease-in-out infinite;
+}
+
+.animate-float-reverse {
+  animation: float-reverse 7s ease-in-out infinite;
+}
+
+.animate-float-gentle {
+  animation: float-gentle 5.5s ease-in-out infinite;
+}
+
+/* Infinite Marquee */
+@keyframes marquee-scroll {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll 32s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* Cosmic Background Mesh */
+.bg-cosmic {
+  background-color: #0c0e12;
+  background-image: 
+    radial-gradient(at 50% 0%, rgba(217, 240, 106, 0.08) 0px, transparent 50%),
+    radial-gradient(at 100% 25%, rgba(138, 75, 255, 0.08) 0px, transparent 50%),
+    radial-gradient(at 0% 50%, rgba(56, 189, 248, 0.06) 0px, transparent 50%),
+    radial-gradient(at 50% 100%, rgba(217, 240, 106, 0.04) 0px, transparent 60%);
+}
+
+.bg-dot-grid {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Holographic / Shimmer Border */
+.holographic-border {
+  position: relative;
+}
+.holographic-border::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(217, 240, 106, 0.4), rgba(255, 255, 255, 0.05), rgba(168, 85, 247, 0.4));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
 @keyframes card-drift {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-6px); }
@@ -82,8 +174,13 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .poster-card-hover,
-  .stream-card {
-    animation: none;
-    transition: none;
+  .stream-card,
+  .animate-float-slow,
+  .animate-float-reverse,
+  .animate-float-gentle,
+  .animate-marquee {
+    animation: none !important;
+    transition: none !important;
   }
 }
+
