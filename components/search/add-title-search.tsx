@@ -29,7 +29,12 @@ export function AddTitleSearch() {
   const [domainFilter, setDomainFilter] = useState<string>("ALL");
   const [results, setResults] = useState<TmdbResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [message, setMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+    actionUrl?: string;
+    actionText?: string;
+  } | null>(null);
 
   // Modal State for Adding with Custom Details
   const [selectedTitle, setSelectedTitle] = useState<TmdbResult | null>(null);
@@ -95,8 +100,12 @@ export function AddTitleSearch() {
 
     const title = selectedTitle.title || selectedTitle.name || "Untitled";
     const mediaType = selectedTitle.media_type === "tv" ? "TV" : "MOVIE";
-    const releaseDate =
+    const rawReleaseDate =
       selectedTitle.release_date || selectedTitle.first_air_date || null;
+    const releaseDate =
+      typeof rawReleaseDate === "string" && rawReleaseDate.trim()
+        ? rawReleaseDate.trim()
+        : null;
 
     try {
       const res = await fetch("/api/library", {
@@ -106,9 +115,9 @@ export function AddTitleSearch() {
           externalMediaId: selectedTitle.id,
           mediaType,
           title,
-          posterPath: selectedTitle.poster_path,
-          backdropPath: selectedTitle.backdrop_path,
-          overview: selectedTitle.overview,
+          posterPath: selectedTitle.poster_path || null,
+          backdropPath: selectedTitle.backdrop_path || null,
+          overview: selectedTitle.overview || null,
           releaseDate,
           domain: modalDomain,
           status: modalStatus,
@@ -118,12 +127,24 @@ export function AddTitleSearch() {
         }),
       });
 
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
+
+      if (res.status === 401) {
+        setMessage({
+          type: "error",
+          text: "Please sign in to add titles to your universe.",
+          actionUrl: "/login",
+          actionText: "Sign In",
+        });
+        return;
+      }
 
       if (res.ok) {
         setMessage({
           type: "success",
           text: `"${title}" has been added to your universe!`,
+          actionUrl: "/library",
+          actionText: "View in Library",
         });
         setSelectedTitle(null);
       } else {
@@ -160,25 +181,38 @@ export function AddTitleSearch() {
           status: manualStatus,
           posterPath: manualPoster.trim() || null,
           overview: manualOverview.trim() || null,
-          releaseDate: manualReleaseDate || null,
+          releaseDate: manualReleaseDate.trim() || null,
           rating: manualRating,
           notes: null,
           favorite: manualFavorite,
         }),
       });
 
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
+
+      if (res.status === 401) {
+        setMessage({
+          type: "error",
+          text: "Please sign in to add titles to your universe.",
+          actionUrl: "/login",
+          actionText: "Sign In",
+        });
+        return;
+      }
 
       if (res.ok) {
         setMessage({
           type: "success",
           text: `Custom title "${manualTitle}" successfully added!`,
+          actionUrl: "/library",
+          actionText: "View in Library",
         });
         setManualTitle("");
         setManualPoster("");
         setManualOverview("");
         setManualRating(null);
         setManualFavorite(false);
+        setManualReleaseDate("");
       } else {
         setMessage({
           type: "error",
@@ -251,14 +285,25 @@ export function AddTitleSearch() {
             {message.type === "success" ? <Check size={16} /> : <X size={16} />}
             <span>{message.text}</span>
           </div>
-          {message.type === "success" && (
+          {message.actionUrl && message.actionText ? (
+            <Link
+              href={message.actionUrl}
+              className={`rounded-full px-3.5 py-1 font-semibold transition ${
+                message.type === "success"
+                  ? "bg-[#d9f06a] text-[#101214] hover:bg-[#cbe25a]"
+                  : "bg-rose-500 text-white hover:bg-rose-600"
+              }`}
+            >
+              {message.actionText} →
+            </Link>
+          ) : message.type === "success" ? (
             <Link
               href="/library"
               className="rounded-full bg-[#d9f06a] px-3.5 py-1 font-semibold text-[#101214] hover:bg-[#cbe25a]"
             >
               View in Library →
             </Link>
-          )}
+          ) : null}
         </div>
       )}
 

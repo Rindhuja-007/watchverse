@@ -1,9 +1,13 @@
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
+import { authOptions } from "@/lib/auth";
 import { Navbar } from "@/components/common/navbar";
 import { AddTitleSearch } from "@/components/search/add-title-search";
-import { PlusCircle, Film } from "lucide-react";
-import Link from "next/link";
+import { PlusCircle } from "lucide-react";
 
-export default function AddPage() {
+export default async function AddPage() {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) redirect("/login");
   return (
     <div className="min-h-screen bg-[#0d0f12] text-[#f5f1e8]">
       <Navbar />

@@ -14,7 +14,13 @@ const createEntrySchema = z.object({
   releaseDate: z.string().nullable().optional(),
   domain: z.enum(["MOVIE", "SERIES", "ANIME", "KDRAMA", "SITCOM"]).default("MOVIE"),
   status: z.enum(["WATCHED", "WATCHING", "PLAN_TO_WATCH", "ON_HOLD", "DROPPED"]).default("PLAN_TO_WATCH"),
-  rating: z.number().int().min(1).max(10).nullable().optional(),
+  rating: z
+    .number()
+    .min(1)
+    .max(10)
+    .transform((val) => Math.round(val))
+    .nullable()
+    .optional(),
   notes: z.string().max(5000).nullable().optional(),
   favorite: z.boolean().default(false),
 });
@@ -114,6 +120,15 @@ export async function POST(request: Request) {
       return NextResponse.json({ entry: updated, updated: true }, { status: 200 });
     }
 
+    // Safely parse releaseDate to avoid passing Invalid Date to Prisma
+    let releaseDate: Date | null = null;
+    if (input.releaseDate && typeof input.releaseDate === "string" && input.releaseDate.trim()) {
+      const parsedDate = new Date(input.releaseDate.trim());
+      if (!isNaN(parsedDate.getTime())) {
+        releaseDate = parsedDate;
+      }
+    }
+
     const entry = await db.watchEntry.create({
       data: {
         userId: session.user.id,
@@ -123,7 +138,7 @@ export async function POST(request: Request) {
         posterPath: input.posterPath || null,
         backdropPath: input.backdropPath || null,
         overview: input.overview || null,
-        releaseDate: input.releaseDate ? new Date(input.releaseDate) : null,
+        releaseDate,
         domain: input.domain,
         status: input.status,
         rating: input.rating ?? null,
@@ -142,7 +157,7 @@ export async function POST(request: Request) {
       );
     }
     return NextResponse.json(
-      { error: "Could not add title to library." },
+      { error: error?.message || "Could not add title to library." },
       { status: 500 }
     );
   }
