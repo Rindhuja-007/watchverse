@@ -235,39 +235,56 @@ export function LibraryView({ initialEntries }: LibraryViewProps) {
   }
 
   return (
-    <div className="min-h-screen bg-[#090a0c] text-[#f5f1e8] pb-32">
+    <div className="min-h-screen bg-[#0d0f12] text-[#f5f1e8] pb-32">
       {/* Top search & quick bar for mobile / library view */}
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-6 pb-2">
-        {/* Category / Domain Filter Pills Row */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-3 scrollbar-none">
-          {[
-            { id: "ALL", label: "All" },
-            { id: "MOVIE", label: "Movies" },
-            { id: "SERIES", label: "Series" },
-            { id: "ANIME", label: "Anime" },
-            { id: "KDRAMA", label: "K-Drama" },
-            { id: "SITCOM", label: "Sitcom" },
-          ].map((pill) => {
-            const isActive = activeDomain === pill.id;
-            return (
-              <button
-                key={pill.id}
-                onClick={() => setActiveDomain(pill.id as DomainTab)}
-                className={`rounded-full px-5 py-1.5 text-xs sm:text-sm font-bold transition-all cursor-pointer ${
-                  isActive
-                    ? "bg-[#ea3829] text-white shadow-md shadow-[#ea3829]/30"
-                    : "border border-white/10 bg-white/[0.04] text-white/70 hover:bg-white/10 hover:text-white"
-                }`}
-              >
-                {pill.label}
-              </button>
-            );
-          })}
+      <div className="mx-auto max-w-7xl px-6 sm:px-10 lg:px-14 pt-8 pb-2">
+        {/* Category / Domain Filter Pills Row & Search Bar */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pb-3">
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+            {[
+              { id: "ALL", label: "All" },
+              { id: "MOVIE", label: "Movies" },
+              { id: "SERIES", label: "Series" },
+              { id: "ANIME", label: "Anime" },
+              { id: "KDRAMA", label: "K-Drama" },
+              { id: "SITCOM", label: "Sitcom" },
+            ].map((pill) => {
+              const isActive = activeDomain === pill.id;
+              return (
+                <button
+                  key={pill.id}
+                  onClick={() => setActiveDomain(pill.id as DomainTab)}
+                  className={`rounded-full px-5 py-1.5 text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+                    isActive
+                      ? "bg-[#ea3829] text-white shadow-md shadow-[#ea3829]/30"
+                      : "border border-white/10 bg-white/[0.04] text-white/70 hover:bg-white/10 hover:text-white"
+                  }`}
+                >
+                  {pill.label}
+                </button>
+              );
+            })}
+          </div>
 
-          <div className="ml-auto hidden sm:flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
+            {/* Search Input matching reference image */}
+            <div className="relative flex-1 sm:w-72">
+              <Search
+                size={14}
+                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/40"
+              />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Filter your library by title or tags..."
+                className="w-full rounded-full border border-white/10 bg-[#16181d] py-1.5 pl-9 pr-4 text-xs text-white placeholder-white/40 focus:border-[#d9f06a]/60 focus:bg-[#1a1c22] focus:outline-none transition shadow-inner"
+              />
+            </div>
+
             <button
               onClick={() => setIsImportModalOpen(true)}
-              className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3.5 py-1.5 text-xs font-semibold text-white/80 hover:bg-white/10 hover:text-white transition"
+              className="hidden sm:flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3.5 py-1.5 text-xs font-semibold text-white/80 hover:bg-white/10 hover:text-white transition cursor-pointer"
             >
               <FileCode size={14} className="text-[#ef4444]" />
               <span>Import / Export XML</span>
@@ -275,7 +292,7 @@ export function LibraryView({ initialEntries }: LibraryViewProps) {
 
             <Link
               href="/add"
-              className="flex items-center gap-1 rounded-full bg-[#ef4444] px-3.5 py-1.5 text-xs font-bold text-white shadow-sm hover:bg-[#dc2626] transition"
+              className="flex items-center gap-1 rounded-full bg-[#d9f06a] px-3.5 py-1.5 text-xs font-bold text-[#101214] shadow-sm hover:bg-[#cbe25a] transition"
             >
               <Plus size={14} />
               <span>Add</span>
