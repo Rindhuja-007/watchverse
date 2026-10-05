@@ -38,7 +38,7 @@ export async function GET(request: Request) {
   const search = searchParams.get("search")?.trim();
   const sort = searchParams.get("sort") || "recent";
 
-  const where: Record<string, any> = { userId: session.user.id };
+  const where: Record<string, unknown> = { userId: session.user.id };
 
   if (status && status !== "ALL") {
     where.status = status;
@@ -53,7 +53,7 @@ export async function GET(request: Request) {
     where.title = { contains: search };
   }
 
-  let orderBy: any = { createdAt: "desc" };
+  let orderBy: Record<string, string> | Array<Record<string, string>> = { createdAt: "desc" };
   if (sort === "rating_desc") {
     orderBy = [{ rating: "desc" }, { createdAt: "desc" }];
   } else if (sort === "title_asc") {
@@ -148,16 +148,17 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json({ entry }, { status: 201 });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Failed to add entry to library:", error);
-    if (error?.code === "P2002") {
+    const err = error as { code?: string; message?: string };
+    if (err?.code === "P2002") {
       return NextResponse.json(
         { error: "This title is already in your library." },
         { status: 409 }
       );
     }
     return NextResponse.json(
-      { error: error?.message || "Could not add title to library." },
+      { error: err?.message || "Could not add title to library." },
       { status: 500 }
     );
   }

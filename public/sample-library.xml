@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<watchverse version="1.0">
+  <user>
+    <name>Sample Collector</name>
+    <email>collector@example.com</email>
+    <exportedAt>2026-10-05T12:00:00.000Z</exportedAt>
+    <totalEntries>6</totalEntries>
+  </user>
+  <entries>
+    <entry>
+      <title>Steins;Gate</title>
+      <domain>ANIME</domain>
+      <mediaType>TV</mediaType>
+      <status>WATCHED</status>
+      <rating>10</rating>
+      <seasonNumber>1</seasonNumber>
+      <currentEpisode>24</currentEpisode>
+      <totalEpisodes>24</totalEpisodes>
+      <favorite>true</favorite>
+      <overview>An eccentric scientist invents a microwave that can send messages into the past.</overview>
+      <notes>El Psy Kongroo. The greatest sci-fi anime ever made.</notes>
+      <posterPath>https://image.tmdb.org/t/p/w500/5m1U2n4b0X9z.jpg</posterPath>
+      <releaseDate>2011-04-06</releaseDate>
+    </entry>
+    <entry>
+      <title>Hunter x Hunter (2011)</title>
+      <domain>ANIME</domain>
+      <mediaType>TV</mediaType>
+      <status>WATCHED</status>
+      <rating>10</rating>
+      <seasonNumber>1</seasonNumber>
+      <currentEpisode>148</currentEpisode>
+      <totalEpisodes>148</totalEpisodes>
+      <favorite>true</favorite>
+      <overview>Gon Freecss aspires to become a Hunter to find his father.</overview>
+      <notes>Chimera Ant arc is unmatched in emotional and thematic depth.</notes>
+      <posterPath>https://image.tmdb.org/t/p/w500/ucmpFdud9q57kU9.jpg</posterPath>
+      <releaseDate>2011-10-02</releaseDate>
+    </entry>
+    <entry>
+      <title>Suzume</title>
+      <domain>MOVIE</domain>
+      <mediaType>MOVIE</mediaType>
+      <status>WATCHED</status>
+      <rating>9</rating>
+      <seasonNumber>1</seasonNumber>
+      <currentEpisode>1</currentEpisode>
+      <totalEpisodes>1</totalEpisodes>
+      <favorite>true</favorite>
+      <overview>A modern action adventure road story where a 17-year-old girl named Suzume helps close doors causing disasters.</overview>
+      <notes>Makoto Shinkai disaster trilogy culmination. Wonderful chair companion.</notes>
+      <posterPath>https://image.tmdb.org/t/p/w500/vIew3s0L.jpg</posterPath>
+      <releaseDate>2022-11-11</releaseDate>
+    </entry>
+    <entry>
+      <title>Cyberpunk: Edgerunners</title>
+      <domain>ANIME</domain>
+      <mediaType>TV</mediaType>
+      <status>WATCHED</status>
+      <rating>9</rating>
+      <seasonNumber>1</seasonNumber>
+      <currentEpisode>10</currentEpisode>
+      <totalEpisodes>10</totalEpisodes>
+      <favorite>true</favorite>
+      <overview>A street kid trying to survive in Night City, a technology and body modification-obsessed city of the future.</overview>
+      <notes>Studio Trigger animation and 'I Really Want to Stay At Your House'.</notes>
+      <posterPath>https://image.tmdb.org/t/p/w500/7d56uV.jpg</posterPath>
+      <releaseDate>2022-09-13</releaseDate>
+    </entry>
+    <entry>
+      <title>Frieren: Beyond Journey's End</title>
+      <domain>ANIME</domain>
+      <mediaType>TV</mediaType>
+      <status>WATCHING</status>
+      <rating>10</rating>
+      <seasonNumber>1</seasonNumber>
+      <currentEpisode>28</currentEpisode>
+      <totalEpisodes>28</totalEpisodes>
+      <favorite>true</favorite>
+      <overview>An elven mage and her fellow adventurers have defeated the Demon King and brought peace to the land.</overview>
+      <notes>A breathtaking meditation on time, memory, and mortal connection.</notes>
+      <posterPath>https://image.tmdb.org/t/p/w500/9G123kL.jpg</posterPath>
+      <releaseDate>2023-09-29</releaseDate>
+    </entry>
+    <entry>
+      <title>Vinland Saga</title>
+      <domain>ANIME</domain>
+      <mediaType>TV</mediaType>
+      <status>WATCHED</status>
+      <rating>10</rating>
+      <seasonNumber>2</seasonNumber>
+      <currentEpisode>24</currentEpisode>
+      <totalEpisodes>24</totalEpisodes>
+      <favorite>true</favorite>
+      <overview>Raised by Vikings who murdered his family, Thorfinn becomes a terrifying warrior.</overview>
+      <notes>I have no enemies. Season 2 farm arc transformed this into a philosophical classic.</notes>
+      <posterPath>https://image.tmdb.org/t/p/w500/9V87bX.jpg</posterPath>
+      <releaseDate>2019-07-07</releaseDate>
+    </entry>
+  </entries>
+</watchverse>

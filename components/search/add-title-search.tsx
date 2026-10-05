@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useTransition } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -10,11 +10,9 @@ import {
   Check,
   Film,
   Tv,
-  Sparkles,
   Loader2,
   X,
   BookmarkPlus,
-  SlidersHorizontal,
   FilePlus,
   Heart,
 } from "lucide-react";
@@ -59,9 +57,9 @@ export function AddTitleSearch() {
   // Load initial results or run search
   useEffect(() => {
     let active = true;
-    setIsSearching(true);
 
     const timer = setTimeout(async () => {
+      if (active) setIsSearching(true);
       try {
         const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
         if (!res.ok) throw new Error("Search failed");

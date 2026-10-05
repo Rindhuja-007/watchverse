@@ -51,7 +51,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
       setPending(false);
     } else {
       router.refresh();
-      router.push("/dashboard");
+      router.push("/library");
     }
   }
 
@@ -69,7 +69,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
         setError("Demo account is not seeded yet. Running setup...");
       } else {
         router.refresh();
-        router.push("/dashboard");
+        router.push("/library");
       }
     } catch {
       setError("Failed to sign in with demo account.");

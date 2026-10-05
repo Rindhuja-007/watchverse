@@ -1,5 +1,5 @@
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -72,6 +72,9 @@ model WatchEntry {
   rating          Int?
   notes           String?
   favorite        Boolean           @default(false)
+  seasonNumber    Int?              @default(1)
+  currentEpisode  Int?              @default(0)
+  totalEpisodes   Int?              @default(12)
   dateAdded       DateTime          @default(now())
   dateStarted     DateTime?
   dateCompleted   DateTime?

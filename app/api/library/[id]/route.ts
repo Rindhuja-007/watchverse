@@ -38,7 +38,7 @@ export async function PATCH(
       return NextResponse.json({ error: "Invalid update data", details: parsed.error.format() }, { status: 400 });
     }
 
-    const data: Record<string, any> = { ...parsed.data };
+    const data: Record<string, unknown> = { ...parsed.data };
 
     if (data.status === "WATCHED" && !existing.dateCompleted) {
       data.dateCompleted = new Date();

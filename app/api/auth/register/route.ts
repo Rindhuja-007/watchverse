@@ -24,10 +24,10 @@ export async function POST(request: Request) {
       select: { id: true, name: true, email: true },
     });
     return NextResponse.json({ user }, { status: 201 });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Registration error:", error);
     return NextResponse.json(
-      { error: error?.message || "Internal server or database connection error." },
+      { error: (error as Error)?.message || "Internal server or database connection error." },
       { status: 500 }
     );
   }
