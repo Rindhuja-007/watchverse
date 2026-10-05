@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
-const { execSync } = require("child_process");
 const fs = require("fs");
 const path = require("path");
+const { execSync } = require("child_process");
 
-// 1. Detect target provider from DATABASE_URL
+// Determine DATABASE_URL from process.env or .env / .env.local
 let dbUrl = process.env.DATABASE_URL;
 if (!dbUrl) {
   for (const envFile of [".env.local", ".env"]) {
@@ -32,26 +32,15 @@ if (fs.existsSync(schemaPath)) {
   const currentMatch = schema.match(/provider\s*=\s*"([^"]+)"/);
   const currentProvider = currentMatch ? currentMatch[1] : null;
 
-  if (currentProvider !== targetProvider) {
-    console.log(`🔄 Adjusting Prisma datasource provider to "${targetProvider}" based on DATABASE_URL...`);
+  if (currentProvider && currentProvider !== targetProvider) {
+    console.log(`🔄 Auto-syncing Prisma provider: switching from "${currentProvider}" to "${targetProvider}"...`);
     schema = schema.replace(/provider\s*=\s*"[^"]+"/, `provider = "${targetProvider}"`);
     fs.writeFileSync(schemaPath, schema);
+    console.log("📦 Generating Prisma client for " + targetProvider + "...");
+    try {
+      execSync("node node_modules/prisma/build/index.js generate", { stdio: "inherit" });
+    } catch (e) {
+      console.warn("Prisma generate warning:", e.message);
+    }
   }
 }
-
-console.log("📦 Generating Prisma client...");
-execSync("node node_modules/prisma/build/index.js generate", { stdio: "inherit" });
-
-if (isPostgres) {
-  console.log("🔄 PostgreSQL DATABASE_URL detected. Syncing schema to database...");
-  try {
-    execSync("node node_modules/prisma/build/index.js db push --accept-data-loss", {
-      stdio: "inherit",
-    });
-  } catch (error) {
-    console.warn("⚠️ Prisma db push warning:", error.message);
-  }
-}
-
-console.log("⚡ Building Next.js application...");
-execSync("next build", { stdio: "inherit" });
