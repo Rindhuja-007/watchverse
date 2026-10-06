@@ -23,6 +23,11 @@ const createEntrySchema = z.object({
     .optional(),
   notes: z.string().max(5000).nullable().optional(),
   favorite: z.boolean().default(false),
+  seasonNumber: z.number().int().optional(),
+  currentEpisode: z.number().int().optional(),
+  totalEpisodes: z.number().int().optional(),
+  genres: z.array(z.string()).optional(),
+  labels: z.array(z.string()).optional(),
 });
 
 export async function GET(request: Request) {
@@ -129,19 +134,28 @@ export async function POST(request: Request) {
       }
     }
 
+    // Clean and normalize posterPath
+    let posterPath = input.posterPath ? input.posterPath.trim() : null;
+    if (posterPath && posterPath.startsWith("/") && !posterPath.startsWith("//")) {
+      posterPath = `https://image.tmdb.org/t/p/w500${posterPath}`;
+    }
+
     const entry = await db.watchEntry.create({
       data: {
         userId: session.user.id,
         externalMediaId,
         mediaType: input.mediaType,
         title: input.title,
-        posterPath: input.posterPath || null,
+        posterPath,
         backdropPath: input.backdropPath || null,
         overview: input.overview || null,
         releaseDate,
         domain: input.domain,
         status: input.status,
         rating: input.rating ?? null,
+        seasonNumber: input.seasonNumber ?? 1,
+        currentEpisode: input.currentEpisode ?? (input.status === "WATCHED" ? (input.totalEpisodes ?? 12) : 0),
+        totalEpisodes: input.totalEpisodes ?? 12,
         notes: input.notes ?? null,
         favorite: input.favorite,
       },
@@ -161,5 +175,22 @@ export async function POST(request: Request) {
       { error: err?.message || "Could not add title to library." },
       { status: 500 }
     );
+  }
+}
+
+export async function DELETE() {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "Sign in required." }, { status: 401 });
+  }
+
+  try {
+    const result = await db.watchEntry.deleteMany({
+      where: { userId: session.user.id },
+    });
+    return NextResponse.json({ success: true, count: result.count });
+  } catch (error) {
+    console.error("Failed to clear library:", error);
+    return NextResponse.json({ error: "Failed to clear library." }, { status: 500 });
   }
 }

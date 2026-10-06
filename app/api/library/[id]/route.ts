@@ -10,6 +10,11 @@ const updateSchema = z.object({
   notes: z.string().max(5000).nullable().optional(),
   favorite: z.boolean().optional(),
   domain: z.enum(["MOVIE", "SERIES", "ANIME", "KDRAMA", "SITCOM"]).optional(),
+  seasonNumber: z.number().int().optional(),
+  currentEpisode: z.number().int().optional(),
+  totalEpisodes: z.number().int().optional(),
+  posterPath: z.string().nullable().optional(),
+  title: z.string().min(1).max(300).optional(),
 });
 
 export async function PATCH(

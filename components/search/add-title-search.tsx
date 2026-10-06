@@ -53,6 +53,8 @@ export function AddTitleSearch() {
   const [manualRating, setManualRating] = useState<number | null>(null);
   const [manualFavorite, setManualFavorite] = useState(false);
   const [manualReleaseDate, setManualReleaseDate] = useState("");
+  const [manualGenre, setManualGenre] = useState("");
+  const [manualLabel, setManualLabel] = useState("");
 
   // Load initial results or run search
   useEffect(() => {
@@ -113,7 +115,11 @@ export function AddTitleSearch() {
           externalMediaId: selectedTitle.id,
           mediaType,
           title,
-          posterPath: selectedTitle.poster_path || null,
+          posterPath: selectedTitle.poster_path
+            ? selectedTitle.poster_path.startsWith("http")
+              ? selectedTitle.poster_path
+              : `https://image.tmdb.org/t/p/w500${selectedTitle.poster_path}`
+            : null,
           backdropPath: selectedTitle.backdrop_path || null,
           overview: selectedTitle.overview || null,
           releaseDate,
@@ -169,6 +175,15 @@ export function AddTitleSearch() {
     setMessage(null);
 
     try {
+      let posterPath = manualPoster.trim() || null;
+      if (posterPath && posterPath.startsWith("/") && !posterPath.startsWith("//")) {
+        posterPath = `https://image.tmdb.org/t/p/w500${posterPath}`;
+      }
+
+      const notesParts: string[] = [];
+      if (manualGenre.trim()) notesParts.push(`[Genre: ${manualGenre.trim()}]`);
+      if (manualLabel.trim()) notesParts.push(`[Label: ${manualLabel.trim()}]`);
+
       const res = await fetch("/api/library", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -177,12 +192,14 @@ export function AddTitleSearch() {
           mediaType: manualMediaType,
           domain: manualDomain,
           status: manualStatus,
-          posterPath: manualPoster.trim() || null,
+          posterPath,
           overview: manualOverview.trim() || null,
           releaseDate: manualReleaseDate.trim() || null,
           rating: manualRating,
-          notes: null,
+          notes: notesParts.length ? notesParts.join(" ") : null,
           favorite: manualFavorite,
+          genres: manualGenre.trim() ? [manualGenre.trim()] : [],
+          labels: manualLabel.trim() ? [manualLabel.trim()] : [],
         }),
       });
 
@@ -211,6 +228,8 @@ export function AddTitleSearch() {
         setManualRating(null);
         setManualFavorite(false);
         setManualReleaseDate("");
+        setManualGenre("");
+        setManualLabel("");
       } else {
         setMessage({
           type: "error",
@@ -545,6 +564,32 @@ export function AddTitleSearch() {
                   </button>
                 ))}
               </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-medium uppercase tracking-wider text-white/70">
+                Genre(s)
+              </label>
+              <input
+                value={manualGenre}
+                onChange={(e) => setManualGenre(e.target.value)}
+                placeholder="e.g. Action, Sci-Fi, Psychological"
+                className="mt-1.5 w-full rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-white/30 outline-none transition focus:border-[#d9f06a]"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-medium uppercase tracking-wider text-white/70">
+                Custom Label / Tag
+              </label>
+              <input
+                value={manualLabel}
+                onChange={(e) => setManualLabel(e.target.value)}
+                placeholder="e.g. Masterpiece, Weekend Binge"
+                className="mt-1.5 w-full rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-white/30 outline-none transition focus:border-[#d9f06a]"
+              />
             </div>
           </div>
 

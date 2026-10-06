@@ -54,4 +54,10 @@ if (isPostgres) {
 }
 
 console.log("⚡ Building Next.js application...");
-execSync("next build", { stdio: "inherit" });
+const nextBin = path.join(__dirname, "../node_modules/next/dist/bin/next");
+if (fs.existsSync(nextBin)) {
+  execSync(`node "${nextBin}" build`, { stdio: "inherit" });
+} else {
+  execSync("next build", { stdio: "inherit" });
+}
+
