@@ -2,6 +2,8 @@ import { NextResponse, NextRequest } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import db from "@/lib/db";
+import { enrichMediaMetadata } from "@/lib/enricher";
+import { resolvePosterUrl } from "@/lib/images";
 
 interface IncomingEntry {
   title: string;
@@ -87,6 +89,44 @@ export async function POST(req: NextRequest) {
           cleanTitle.split("").reduce((acc, char) => (acc << 5) - acc + char.charCodeAt(0), 0)
         ) % 10000000;
 
+      // Check if we need to auto-enrich poster & metadata from AniList/TVMaze/TMDB
+      let finalPoster = item.posterPath;
+      let finalBackdrop = item.backdropPath || null;
+      let finalOverview = item.overview || null;
+      let finalReleaseDate = item.releaseDate ? new Date(item.releaseDate) : null;
+      let finalTotalEps = totalEpisodes;
+      let finalExternalId = item.externalMediaId || pseudoId;
+
+      const needsEnrichment =
+        !finalPoster ||
+        finalPoster.includes("photo-1536440136628") ||
+        finalPoster.includes("1m2n3o4");
+
+      if (needsEnrichment) {
+        try {
+          const enriched = await enrichMediaMetadata(cleanTitle, domain);
+          if (enriched) {
+            finalPoster = enriched.posterPath || finalPoster;
+            finalBackdrop = enriched.backdropPath || finalBackdrop;
+            finalOverview = finalOverview || enriched.overview;
+            if (!finalReleaseDate && enriched.releaseDate) {
+              finalReleaseDate = new Date(enriched.releaseDate);
+            }
+            if (enriched.totalEpisodes && totalEpisodes <= 12) {
+              finalTotalEps = enriched.totalEpisodes;
+            }
+            if (enriched.externalMediaId) {
+              finalExternalId = enriched.externalMediaId;
+            }
+          }
+        } catch (err) {
+          console.warn(`Enrichment failed for ${cleanTitle}:`, err);
+        }
+      }
+
+      // Ensure poster is cleanly formatted with fallbacks
+      finalPoster = resolvePosterUrl(finalPoster, domain, cleanTitle);
+
       // Check if entry already exists for user by title
       const existing = await db.watchEntry.findFirst({
         where: {
@@ -99,6 +139,11 @@ export async function POST(req: NextRequest) {
 
       if (existing) {
         // Update existing entry
+        const shouldUpdatePoster =
+          !existing.posterPath ||
+          existing.posterPath.includes("photo-1536440136628") ||
+          existing.posterPath.includes("1m2n3o4");
+
         await db.watchEntry.update({
           where: { id: existing.id },
           data: {
@@ -106,10 +151,12 @@ export async function POST(req: NextRequest) {
             rating: rating ?? existing.rating,
             seasonNumber,
             currentEpisode,
-            totalEpisodes,
+            totalEpisodes: finalTotalEps,
             domain,
             notes: item.notes || existing.notes,
-            posterPath: item.posterPath || existing.posterPath,
+            posterPath: shouldUpdatePoster ? finalPoster : existing.posterPath,
+            backdropPath: finalBackdrop || existing.backdropPath,
+            overview: existing.overview || finalOverview,
           },
         });
       } else {
@@ -117,7 +164,7 @@ export async function POST(req: NextRequest) {
         await db.watchEntry.create({
           data: {
             userId,
-            externalMediaId: pseudoId,
+            externalMediaId: finalExternalId,
             mediaType,
             domain,
             title: cleanTitle,
@@ -125,15 +172,13 @@ export async function POST(req: NextRequest) {
             rating,
             seasonNumber,
             currentEpisode,
-            totalEpisodes,
+            totalEpisodes: finalTotalEps,
             favorite: Boolean(item.favorite),
-            overview: item.overview || `Imported entry for ${cleanTitle}.`,
+            overview: finalOverview || `Imported entry for ${cleanTitle}.`,
             notes: item.notes || null,
-            posterPath:
-              item.posterPath ||
-              "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500&auto=format&fit=crop&q=60",
-            backdropPath: item.backdropPath || null,
-            releaseDate: item.releaseDate ? new Date(item.releaseDate) : null,
+            posterPath: finalPoster,
+            backdropPath: finalBackdrop,
+            releaseDate: finalReleaseDate,
           },
         });
       }

@@ -208,8 +208,14 @@ export function resolvePosterUrl(
 
   // If already full http(s)
   if (clean.startsWith("http://") || clean.startsWith("https://")) {
-    // If it's a known fake TMDB path from previous seeds
-    if (clean.includes("1m2n3o4") || clean.includes("8d8a7k0k1m2n3o4") || clean.includes("9b2N7T8hJ7k5mK9")) {
+    // If it's a known fake TMDB path or generic placeholder from previous imports
+    if (
+      clean.includes("1m2n3o4") ||
+      clean.includes("8d8a7k0k1m2n3o4") ||
+      clean.includes("9b2N7T8hJ7k5mK9") ||
+      clean.includes("photo-1536440136628") ||
+      clean.includes("photo-1489599849927")
+    ) {
       const idx = title ? hashString(title) % FALLBACK_GALLERY.length : 0;
       return FALLBACK_GALLERY[idx];
     }

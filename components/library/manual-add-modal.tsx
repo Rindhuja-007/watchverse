@@ -170,13 +170,13 @@ export function ManualAddModal({ isOpen, onClose, onSuccess }: ManualAddModalPro
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 md:p-6 bg-black/85 backdrop-blur-md overflow-y-auto">
-      <div className="relative w-full max-w-4xl rounded-3xl border border-white/15 bg-[#10131a] shadow-[0_25px_70px_rgba(0,0,0,0.85)] text-[#f5f1e8] my-8 overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 md:p-6 bg-black/85 backdrop-blur-md overflow-hidden">
+      <div className="relative w-full max-w-4xl max-h-[90vh] flex flex-col rounded-3xl border border-white/15 bg-[#10131a] shadow-[0_25px_70px_rgba(0,0,0,0.85)] text-[#f5f1e8] overflow-hidden animate-fadeIn">
         {/* Ambient Top Glow Banner */}
         <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-[#d9f06a] via-[#38bdf8] to-[#ea3829]" />
 
-        {/* Modal Header */}
-        <div className="flex items-center justify-between border-b border-white/10 px-6 py-4.5 bg-white/[0.02]">
+        {/* Modal Header (Sticky top) */}
+        <div className="sticky top-0 z-20 shrink-0 flex items-center justify-between border-b border-white/10 px-6 py-4 bg-[#10131a]">
           <div className="flex items-center gap-2.5">
             <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#d9f06a] text-[#101214] shadow-md shadow-[#d9f06a]/20">
               <Sparkles size={18} />
@@ -199,28 +199,29 @@ export function ManualAddModal({ isOpen, onClose, onSuccess }: ManualAddModalPro
               sounds.click();
               onClose();
             }}
-            className="rounded-full p-2 text-white/50 hover:bg-white/10 hover:text-white transition"
+            className="rounded-full p-2 text-white/50 hover:bg-white/10 hover:text-white transition cursor-pointer"
           >
             <X size={20} />
           </button>
         </div>
 
-        {/* Form Body */}
-        <form onSubmit={handleSubmit} className="p-6">
-          {error && (
-            <div className="mb-5 rounded-2xl border border-rose-500/30 bg-rose-500/10 p-3.5 text-xs text-rose-300 font-medium">
-              {error}
-            </div>
-          )}
+        {/* Form Body with inner scroll and fixed footer */}
+        <form onSubmit={handleSubmit} className="flex-1 flex flex-col min-h-0 overflow-hidden">
+          <div className="flex-1 overflow-y-auto p-6 space-y-6">
+            {error && (
+              <div className="rounded-2xl border border-rose-500/30 bg-rose-500/10 p-3.5 text-xs text-rose-300 font-medium">
+                {error}
+              </div>
+            )}
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            {/* Left 4 Cols: Live Card Preview & Poster Picker */}
-            <div className="lg:col-span-5 flex flex-col items-center">
-              <div className="w-full max-w-[240px]">
-                <div className="text-[11px] font-bold uppercase tracking-wider text-white/40 mb-2 flex items-center gap-1.5">
-                  <ImageIcon size={13} />
-                  <span>Live Poster Preview</span>
-                </div>
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+              {/* Left 4 Cols: Live Card Preview & Poster Picker */}
+              <div className="lg:col-span-5 flex flex-col items-center">
+                <div className="w-full max-w-[180px] sm:max-w-[200px]">
+                  <div className="text-[11px] font-bold uppercase tracking-wider text-white/40 mb-2 flex items-center justify-center gap-1.5">
+                    <ImageIcon size={13} />
+                    <span>Live Poster Preview</span>
+                  </div>
 
                 {/* The 2:3 Cinematic Poster Card Preview */}
                 <div className="group relative aspect-[2/3] w-full rounded-2xl overflow-hidden bg-[#161922] border border-white/20 shadow-2xl transition-all duration-300 hover:scale-[1.02]">
@@ -635,18 +636,19 @@ export function ManualAddModal({ isOpen, onClose, onSuccess }: ManualAddModalPro
                   className="w-full rounded-xl border border-white/15 bg-white/[0.04] p-3 text-xs text-white placeholder-white/30 focus:border-[#d9f06a] focus:outline-none"
                 />
               </div>
+              </div>
             </div>
           </div>
 
-          {/* Modal Actions Footer */}
-          <div className="mt-8 flex items-center justify-end gap-3 border-t border-white/10 pt-5">
+          {/* Modal Actions Footer (Sticky Bottom) */}
+          <div className="sticky bottom-0 z-20 shrink-0 flex items-center justify-end gap-3 border-t border-white/10 px-6 py-3.5 bg-[#10131a]/95 backdrop-blur-md">
             <button
               type="button"
               onClick={() => {
                 sounds.click();
                 onClose();
               }}
-              className="rounded-full px-5 py-2.5 text-xs font-semibold text-white/60 hover:text-white hover:bg-white/10 transition"
+              className="rounded-full px-5 py-2 text-xs font-semibold text-white/60 hover:text-white hover:bg-white/10 transition cursor-pointer"
             >
               Cancel
             </button>
@@ -654,7 +656,7 @@ export function ManualAddModal({ isOpen, onClose, onSuccess }: ManualAddModalPro
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex items-center gap-2 rounded-full bg-[#d9f06a] px-7 py-2.5 text-xs font-black text-[#101214] shadow-lg shadow-[#d9f06a]/20 hover:bg-[#cbe25a] hover:scale-[1.02] active:scale-[0.98] transition cursor-pointer disabled:opacity-50"
+              className="flex items-center gap-2 rounded-full bg-[#d9f06a] px-6 py-2 text-xs font-black text-[#101214] shadow-lg shadow-[#d9f06a]/20 hover:bg-[#cbe25a] hover:scale-[1.02] active:scale-[0.98] transition cursor-pointer disabled:opacity-50"
             >
               <Check size={16} />
               <span>{isSubmitting ? "Adding to Wall..." : "Save to Wall of Watching"}</span>
